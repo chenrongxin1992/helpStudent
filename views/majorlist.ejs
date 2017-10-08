@@ -1,0 +1,26 @@
+<% include head.ejs %>
+
+<div class="container-fluid" style="padding: 0 0 ">
+	<div class="row-fluid">
+		<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+          <img src="../images/szucsselogo.png" class="img-responsive" alt="">  
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+		  <div style="min-height: 70px;"></div>
+        </div>
+	</div>
+
+	<div class="row-fluid">
+		<% majorlist.forEach(function(item){ %>
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+			 <a href="/majorstu?code=<%=item.code%>">
+			  <div style="margin: 5px 0;height:100px;background-color:red;text-align:center;line-height:100px;">
+			  	<%=item.majorName%>
+			  </div>
+			 </a>
+			</div>
+		<% }) %>	
+	</div>
+</div>
+
+<% include foot.ejs %>

@@ -1,0 +1,9 @@
+	<% include head.ejs %>
+
+	//enctype 必须设置成这种，可以将文件已流的形式传送到后台
+    <form action="http://localhost:3000/import" method='post' enctype="multipart/form-data">  
+        <input type='file' name='file'> 
+        <input type='submit' value='submit'>    
+    </form>
+
+    <% include foot.ejs %>

@@ -4,9 +4,9 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+const session = require('express-session')
 
 var index = require('./routes/index');
-var users = require('./routes/users');
 
 var app = express();
 
@@ -22,8 +22,41 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({ 
+	resave: false, //添加 resave 选项  
+  	saveUninitialized: true, //添加 saveUninitialized 选项 
+    secret: 'helpstudent',
+    cookie:{ 
+        maxAge: 1000*60*60*24
+    }
+}));
+app.use(function(req,res,next){ 
+    res.locals.user = req.session.user;   // 从session 获取 user对象
+    res.locals.student = req.session.student
+    
+    let ip = req.headers['x-forwarded-for'] ||
+              req.ip ||
+              req.connection.remoteAddress ||
+              req.socket.remoteAddress ||
+              req.connection.socket.remoteAddress || '';
+    if(ip.split(',').length>0){
+      console.log('ip --- >',ip)
+        ip = ip.split(',')[0]
+    }
+    console.log('check client ip ---> ',ip)
+
+    /*var error = req.session.error;   //获取错误信息
+    delete req.session.error;
+    res.locals.message = "";   // 展示的信息 message
+    if(error){ 
+    	console.log('----- session error -----')
+    	console.log(error)
+        res.locals.message = '<div class="alert alert-danger" style="margin-bottom:20px;color:red;">'+error+'</div>';
+    }*/
+    next();  //中间件传递
+});
+
 app.use('/', index);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
