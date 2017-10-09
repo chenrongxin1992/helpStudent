@@ -56,9 +56,9 @@
 				    <li class="list-group-item">已选人数：<%=item.chooseNum%></li>
 				    <li class="list-group-item">
 				    <% if(item.chooseNum == '3'){%>
-				    	<a href="#" class="btn btn-primary" disabled="disabled" style="font-size:7px;">选择</a>
+				    	<a href="/choosestu?majorstuinfo=<%=item.stuXueHao%><%=item.code%>" class="btn btn-primary" disabled="disabled" style="font-size:7px;">选择</a>
 				   	<%}else{%>
-				   		<a href="#" class="btn btn-primary" class="card-link" style="font-size:7px;">选择</a>
+				   		<a href="/choosestu?majorstuinfo=<%=item.stuXueHao%><%=item.code%>" class="btn btn-primary" class="card-link" style="font-size:7px;">选择</a>
 				   	<%}%>
 				    </li>
 				  </ul>
@@ -121,22 +121,20 @@
 			            	let i = 0
 			            	let tempResult = result.result
 			            	tempResult.forEach(function(item){
-			            		console.log(item.stuName)
-			            		
-								$("#majorstu").append('<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" id="row'
-									+i+'"></div>')
-								//$('<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">').appenTo("#majorstu")
-								$('#row'+i).append('<div class="card card-inverse text-center" id="card'+i+'"></div>')
-								$('#card'+i).append('<div class="card-block" id="card-block'+i+'"></div>')
-								$('#card-block'+i).append('<h4 class="card-title" id="card-title'+i+'">'+item.stuName+'</h4>')
-								$('#card'+i).append('<ul class="list-group list-group-flush" id="list-group'+i+'"></ul>')
-								$('#list-group'+i).append('<li class="list-group-item" id="xuehao'+i+'">学号：'+item.stuXueHao+'</li>')
-								$('#list-group'+i).append('<li class="list-group-item" id="dianhua'+i+'">电话：'+item.stuPhoneNum+'</li>')
-								$('#list-group'+i).append('<li class="list-group-item" id="fudaodidian'+i+'">辅导地点：'+item.teachPlace+'</li>')
-								$('#list-group'+i).append('<li class="list-group-item" id="fudaoshijian'+i+'">辅导时间：'+item.teachTime+'</li>')
-								$('#list-group'+i).append('<li class="list-group-item" id="yixuanrenshu'+i+'">已选人数：'+item.chooseNum+'</li>')
-								$('#list-group'+i).append('<li class="list-group-item" id="xuanze'+i+'"></li>')
-								$('#xuanze'+i).append('<a class="btn btn-primary">选择</a>')
+			            		//console.log(item.stuName)
+			            		$("#majorstu").append(function(){
+			            			if(item.chooseNum == '3'){
+			            				return '<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">'+
+							            		'<div class="card card-inverse text-center" style="background-color: #5cb85c; border-color: #5cb85c;">' + '<div class="card-block">' + 
+							            		'<h4 class="card-title" style="padding-top:7px">' + item.stuName + '</h4></div>' +'<ul class="list-group list-group-flush">' + '<li class="list-group-item">学号：' + item.stuXueHao +
+							            		'</li><li class="list-group-item">电话：' + item.stuPhoneNum + '</li><li class="list-group-item">辅导地点：' + item.teachPlace + '</li><li class="list-group-item">辅导时间：' + item.teachTime + '</li><li class="list-group-item">已选人数：' + item.chooseNum + '</li><li class="list-group-item">' + '<a class="btn btn-primary" disabled="disabled" style="font-size:7px;" href=/choosestu?majorstuinfo='+item.stuXueHao+item.code+'>选择</a></li></div></div>'
+			            			}else{
+			            				return '<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">'+
+							            		'<div class="card card-inverse text-center" style="background-color: #5cb85c; border-color: #5cb85c;">' + '<div class="card-block">' + 
+							            		'<h4 class="card-title" style="padding-top:7px">' + item.stuName + '</h4></div>' +'<ul class="list-group list-group-flush">' + '<li class="list-group-item">学号：' + item.stuXueHao +
+							            		'</li><li class="list-group-item">电话：' + item.stuPhoneNum + '</li><li class="list-group-item">辅导地点：' + item.teachPlace + '</li><li class="list-group-item">辅导时间：' + item.teachTime + '</li><li class="list-group-item">已选人数：' + item.chooseNum + '</li><li class="list-group-item">' + '<a class="btn btn-primary" style="font-size:7px;" href=/choosestu?majorstuinfo='+item.stuXueHao+item.code+' >选择</a></li></div></div>'
+			            			}
+			            		})
 								i++
 						    })          	
 			            },
@@ -147,6 +145,19 @@
                 }
             }
             $("#page").bootstrapPaginator(options);
+            //禁用a标签
+            $("a").each(function (e) {
+            	// console.log(e)
+	            // let judge = $(this).attr('judge');
+	            // console.log('check judge-->',judge)
+	            // if (judge == '3') {
+	            //     $(this).css("cursor", "default");
+	            //     $(this).attr('href', '#');     //修改<a>的 href属性值为 #  这样状态栏不会显示链接地址  
+	            //     $(this).click(function (event) {
+	            //         event.preventDefault();   // 如果<a>定义了 target="_blank“ 需要这句来阻止打开新页面
+	            //     });
+	            // }
+	        });
         })
 	</script>
   </body>
