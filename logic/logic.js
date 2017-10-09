@@ -6,6 +6,7 @@
 const major = require('../db/major')
 const formatInfo = require('../formatInfo/formatInfo')
 const majorStu = require('../db/majorstu')
+const xuekunsheng = require('../db/xuekunsheng')
 const async = require('async')
 
 //专业列表
@@ -149,6 +150,91 @@ exports.getMajorStuPost = function(code,limit,offset,callback){
 			callback(error)
 		}
 		formatInfo.checkResult(result)
+		callback(null,result)
+	})
+}
+
+//选择逻辑
+//返回页面让学困生填写联系方式，并将code对应的课程和学优生信息返回
+//如果学生已经选择好学优生，则直接显示最后结果
+exports.choosestu = function(arg,callback){
+	console.log('进入logic')
+	console.log(arg)
+	let search = majorStu.findOne({})
+		search.where('code').equals(arg.code)
+		search.where('stuXueHao').equals(arg.stuXueHao)
+		search.exec(function(err,doc){
+			if(err){
+				formatInfo.checkError(err.message)
+				callback(err)
+			}
+			console.log('搜索结果-->',doc)
+			formatInfo.checkResult(doc)
+			callback(null,doc)
+		})
+}
+
+//选择确认逻辑
+exports.choosestuconfirm = function(arg,callback){
+	console.log('body -- >',arg)
+	async.waterfall([
+		function(cb){
+			console.log('更新已选人数')
+			let search = majorStu.findOne({})
+				search.where('code').equals(arg.code)
+				search.where('stuXueHao').equals(arg.stuXueHao)
+				search.exec(function(err,doc){
+					if(err){
+						console.log('search err')
+						cb(err)
+					}
+					if(doc){
+						let num = doc.chooseNum + 1
+						console.log('new chooseNum -- >',num)
+						majorStu.update({_id:doc._id},{$set:{chooseNum:num}},function(err){
+							if(err){
+								console.log('update err')
+								cb(err)
+							}
+							console.log('update success')
+							cb(null,doc)
+						})
+					}
+				})
+		},
+		function(doc,cb){
+			console.log('保存记录')
+			let newxuekunsheng = new xuekunsheng({
+				code:doc.code,
+				majorName:doc.majorName,
+				stuName:doc.stuName,
+				stuXueHao:doc.stuXueHao,
+				stuNianJi:doc.stuNianJi,
+				stuPhoneNum:doc.stuPhoneNum,
+				teachPlace:doc.teachPlace,
+				teachTime:doc.teachTime,
+				xuekunshengxuehao:arg.xuehao,
+				xuekunshengxiaoyuankahao:arg.xiaoyuankahao,
+				xuekunshengGender:arg.gender,
+				xuekunshengContace:arg.contact,
+				xuekunshengbeizhu : arg.beizhu,
+				xuekunshengName : arg.name
+			})
+			newxuekunsheng.save(function(err,docs){
+				if(err){
+					console.log('save err')
+					cb(err)
+				}
+				console.log('save success')
+				cb(null,docs)
+			})
+		}
+	],function(error,result){
+		if(error){
+			console.log('async err')
+			callback(error)
+		}
+		console.log('async success')
 		callback(null,result)
 	})
 }

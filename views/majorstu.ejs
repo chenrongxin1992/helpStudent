@@ -22,7 +22,7 @@
 		
     </style>
   </head>
-  <body>
+<body>
 
 <div class="container-fluid" style="padding: 0 0 ">
 	<div class="row-fluid">
@@ -56,7 +56,7 @@
 				    <li class="list-group-item">已选人数：<%=item.chooseNum%></li>
 				    <li class="list-group-item">
 				    <% if(item.chooseNum == '3'){%>
-				    	<a href="/choosestu?majorstuinfo=<%=item.stuXueHao%><%=item.code%>" class="btn btn-primary" disabled="disabled" style="font-size:7px;">选择</a>
+				    	<a href="#" class="btn btn-primary" disabled="disabled" style="font-size:7px;">选择</a>
 				   	<%}else{%>
 				   		<a href="/choosestu?majorstuinfo=<%=item.stuXueHao%><%=item.code%>" class="btn btn-primary" class="card-link" style="font-size:7px;">选择</a>
 				   	<%}%>
@@ -127,7 +127,7 @@
 			            				return '<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">'+
 							            		'<div class="card card-inverse text-center" style="background-color: #5cb85c; border-color: #5cb85c;">' + '<div class="card-block">' + 
 							            		'<h4 class="card-title" style="padding-top:7px">' + item.stuName + '</h4></div>' +'<ul class="list-group list-group-flush">' + '<li class="list-group-item">学号：' + item.stuXueHao +
-							            		'</li><li class="list-group-item">电话：' + item.stuPhoneNum + '</li><li class="list-group-item">辅导地点：' + item.teachPlace + '</li><li class="list-group-item">辅导时间：' + item.teachTime + '</li><li class="list-group-item">已选人数：' + item.chooseNum + '</li><li class="list-group-item">' + '<a class="btn btn-primary" disabled="disabled" style="font-size:7px;" href=/choosestu?majorstuinfo='+item.stuXueHao+item.code+'>选择</a></li></div></div>'
+							            		'</li><li class="list-group-item">电话：' + item.stuPhoneNum + '</li><li class="list-group-item">辅导地点：' + item.teachPlace + '</li><li class="list-group-item">辅导时间：' + item.teachTime + '</li><li class="list-group-item">已选人数：' + item.chooseNum + '</li><li class="list-group-item">' + '<a class="btn btn-primary" disabled="disabled" style="font-size:7px;" href="#">选择</a></li></div></div>'
 			            			}else{
 			            				return '<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">'+
 							            		'<div class="card card-inverse text-center" style="background-color: #5cb85c; border-color: #5cb85c;">' + '<div class="card-block">' + 

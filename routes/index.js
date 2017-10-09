@@ -21,8 +21,8 @@ router.get('/', function(req, res, next) {
 //添加专业
 router.get('/major',function(req,res){
 	let majorInfo = new major({
-			majorName : 'aaaa',
-			code : '0001'
+			majorName : 'dddd',
+			code : '0005'
 		})
 	majorInfo.save(function(err,doc){
 		if(err){
@@ -180,27 +180,45 @@ router.get('/choosestu',function(req,res){
 	// 	code = majorstuinfo.substring(9,13)
 	// console.log()
 	if(!req.query.ticket){
-		console.log('没有ticket，去获取ticket')
 		let ReturnURL = 'http://qiandao.szu.edu.cn:81' + req.originalUrl
 		console.log('ReturnURL url-->',ReturnURL)
 		let url = CASserver + 'login?service=' + ReturnURL
 		console.log('check redirecturl -->',url)
 		console.log('跳转获取ticket')
-		return res.redirect(url)
+
 		if(req.session.student){
-			console.log('学生有session')
+			console.log('没有ticket,学生有session')
 			console.log('session-->',req.session.student)
 			//返回页面让学困生填写联系方式，并将code对应的课程和学优生信息返回
 			//如果学生已经选择好学优生，则直接显示最后结果
-			logic.choosestu()
+			//这一步加上判断，看学生是否已经选择了该辅导学生
+			logic.choosestu(req.session.student,function(error,result){
+				if(error){
+					res.json(formatInfo.resResult(-1,error.message))
+				}
+				res.render('choosestu',{title:'选择学优生',result:result})
+			})
+		}
+		else{
+			console.log('没有ticket，去获取ticket')
+			return res.redirect(url)
 		}
 	}
 	else{
 		if(req.session.student){
 			console.log('有ticket,也有session')
 			console.log('session-->',req.session.student)
+			logic.choosestu(req.session.student,function(error,result){
+				if(error){
+					res.json(formatInfo.resResult(-1,error.message))
+				}
+				res.render('choosestu',{title:'选择学优生',result:result})
+			})
 		}
 		else{
+			let majorstuinfo = req.query.majorstuinfo,
+				stuXueHao = majorstuinfo.substring(0,10),
+				code = majorstuinfo.substring(10,14)
 			let ReturnURL = 'http://qiandao.szu.edu.cn:81' + req.originalUrl
 			console.log('ReturnURL url-->',ReturnURL)
 			console.log('you ticket, meiyou session')
@@ -238,13 +256,10 @@ router.get('/choosestu',function(req,res){
 						   	arg.gender = gender
 						   	arg.containerId = containerId
 						   	arg.RankName = RankName
-						   	arg.r = req.query.r
+						   	arg.code = code
+						   	arg.stuXueHao = stuXueHao
 						    console.log('check arg-->',arg)
 
-						   if(arg.r == 'select'){
-						   		console.log('r 的值又是-->',arg.r)
-						   		return res.json({'errCode':-1,'errMsg':'r=select,请重新扫码！'})
-						   }
 						   console.log('check arg-->',arg)
 						   if(arg.user == null){
 						   		console.log('ticket is unvalid,重新回去获取ticket，清空session')
@@ -261,5 +276,18 @@ router.get('/choosestu',function(req,res){
 			    })
 		}
 	}
+})
+
+//选择学优生确认
+router.post('/choosestuconfirm',function(req,res){
+	console.log('in choosestuconfirm router')
+	console.log(req.body)
+	logic.choosestuconfirm(req.body,function(error,result){
+		if(error){
+			console.log('error-->',error)
+			return res.json(formatInfo.resResult(-1,error.message))
+		}
+		return res.json(formatInfo.resResult(0,'confirm success'))
+	})
 })
 module.exports = router;
