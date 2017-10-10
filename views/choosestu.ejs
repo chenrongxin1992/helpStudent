@@ -9,9 +9,9 @@
     <title><%= title %></title>
 
     <!-- Bootstrap -->
-    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
-	<link rel='stylesheet' href='/stylesheets/style.css' />
-	<link rel='stylesheet' href='/stylesheets/bootstrapValidator.min.css' />
+    <link rel='stylesheet' href='/xys/stylesheets/bootstrap.min.css' />
+	<link rel='stylesheet' href='/xys/stylesheets/style.css' />
+	<link rel='stylesheet' href='/xys/stylesheets/bootstrapValidator.min.css' />
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -30,7 +30,7 @@
 <div class="container" >
 	<div class="row">
 		<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-          <img src="../images/szucsselogo.png" class="img-responsive" alt="">  
+          <img src="../xys/images/szucsselogo.png" class="img-responsive" alt="">  
         </div>
         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
 		 <!--  <div style="min-height: 70px;"></div> -->
@@ -38,10 +38,16 @@
 	</div>
 
 	<div class="row" style=" padding:0 15px;">
-		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="background-color: #5cb85c;text-align: center;font-size: 20px; line-height: 24px;">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="background-color: #00B7FF;text-align: center;font-size: 20px; line-height: 24px;">
 			请填写你的信息
 		</div>
 	</div>
+
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <span class="pull-right"><a href="/xys/majorlist">返回专业列表</a></span>
+    </div>
+  </div>
 
 	<div class="row uniform">
         <form class="form-horizontal">
@@ -59,14 +65,14 @@
             </div>
           </div>
 
-          <div class="form-group" style="height: 0;overflow: hidden;">
+          <div class="form-group" style="display: none;">
             <label for="stuXueHao" class="col-lg-5 col-md-5 col-sm-5 col-xs-12 control-label">辅导学生学号</label>
             <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
               <input type="text" class="form-control" id="stuXueHao" name="stuXueHao" readonly="readonly">
             </div>
           </div>
           
-          <div class="form-group" style="height: 0;overflow: hidden;">
+          <div class="form-group" style="display: none;">
             <label for="code" class="col-lg-5 col-md-5 col-sm-5 col-xs-12 control-label">课程编号</label>
             <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 meeting_info" id="meeting_date_time">
               <input type="text" class="form-control" id="code" name="code" readonly="readonly">
@@ -98,14 +104,14 @@
             <label for="meeting_nianji" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 control-label" style="text-align: center;">请填写并确认你的信息</label>
           </div>
 
-          <div class="form-group" style="height: 0;overflow: hidden;">
+          <div class="form-group" style="display: none;"">
             <label for="xuehao" class="col-lg-5 col-md-5 col-sm-5 col-xs-12 control-label">学号</label>
             <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 meeting_info" id="meeting_date_time">
               <input type="text" class="form-control" id="xuehao" name="xuehao" readonly="readonly">
             </div>
           </div>
 
-          <div class="form-group" style="height: 0;overflow: hidden;">
+          <div class="form-group" style="display: none;">
             <label for="gender" class="col-lg-5 col-md-5 col-sm-5 col-xs-12 control-label">性别</label>
             <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 meeting_info" id="meeting_date_time">
               <input type="text" class="form-control" id="gender" name="gender" readonly="readonly">
@@ -156,10 +162,10 @@
 	</div> -->
 </div>
 
-    <script src="/javascripts/jquery-1.11.2.min.js"></script>
-    <script src="/javascripts/bootstrap.min.js"></script>
-    <script src="/javascripts/bootstrap-paginator.min.js"></script>
-    <script type="text/javascript" src='/javascripts/bootstrapValidator.min.js' ></script>
+    <script src="/xys/javascripts/jquery-1.11.2.min.js"></script>
+    <script src="/xys/javascripts/bootstrap.min.js"></script>
+    <script src="/xys/javascripts/bootstrap-paginator.min.js"></script>
+    <script type="text/javascript" src='/xys/javascripts/bootstrapValidator.min.js' ></script>
     <script type="text/javascript">
     function GetQueryString(name)
 	{
@@ -232,7 +238,7 @@
             console.log('check args-->',stuXueHao,code,contact,beizhu,xiaoyuankahao,gender,xuehao)
             //提交
             $.ajax({
-              url: '/choosestuconfirm', 
+              url: '/xys/choosestuconfirm', 
               async: true,
               dataType: 'json',
               type: 'POST',
@@ -252,7 +258,7 @@
                 console.log(result)
                 if(result.errCode == 0){
                   //弹出模态框
-                  window.location.href = '/choosestusucess'
+                  window.location.href = '/xys/choosestusucess'
                   return  false
                 }
               },

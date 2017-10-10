@@ -19,16 +19,7 @@
       <script src="http://apps.bdimg.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <style type="text/css">
-		.majorlist:hover{
-			background-color:#00B7FF;
-		}
-		.majorlist{
-			margin: 5px 0;
-			height:100px;
-			background-color:#5cb85c;
-			text-align:center;
-			line-height:100px;
-		}
+		
     </style>
   </head>
 <body>
@@ -39,32 +30,46 @@
           <img src="../xys/images/szucsselogo.png" class="img-responsive" alt="">  
         </div>
         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-		  <div style="min-height: 70px;"></div>
+		  <!-- <div style="min-height: 70px;"></div> -->
         </div>
 	</div>
 
 	<div class="row" style=" padding:0 15px;">
-		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="background-color: #00B7FF;text-align: center;font-size: 28px; line-height: 30px;">
-			学困生帮扶
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="background-color: #00B7FF;text-align: center;font-size: 20px; line-height: 24px;">
+			选择我的学困生
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-			<span class="pull-right"><a href="/xys/myhelpstu?what=what">我辅导的学生</a> | <a href="/xys/mychoose?what=what">我选择的学优生</a></span>
-		</div>
-	</div>
+	    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+	      <span class="pull-right"><a href="/xys/majorlist">返回专业列表</a></span>
+	    </div>
+	  </div>
 
-	<div class="row">
-		<% majorlist.forEach(function(item){ %>
-			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 ">
-			 <a href="/xys/majorstu?code=<%=item.code%>">
-			  <div class="majorlist">
-			  	<span class="glyphicon glyphicon-book" style="color:black;font-size:22px;"> <%=item.majorName%></span>
-			  </div>
-			 </a>
+	<div class="row" id="majorstu">
+		<% if(result) {%>
+		<% result.forEach(function(item){ %>
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+			 	<!--  <div style="margin: 5px 0;min-height:100px;background-color:red;text-align:center;"> -->
+			 	<div class="card card-inverse text-center" style="background-color: #5cb85c; border-color: #5cb85c;" >
+				  <div class="card-block">
+				    <h4 class="card-title" style="padding-top:7px"><%=item.majorName%></h4>
+				  </div>
+				  <ul class="list-group list-group-flush">
+				  	<li class="list-group-item">姓名：<%=item.xuekunshengName%></li>
+				    <li class="list-group-item">学号：<%=item.xuekunshengxuehao%></li>
+				    <li class="list-group-item">电话：<%=item.xuekunshengContact%></li>
+				    <li class="list-group-item">备注：<%=item.xuekunshengbeizhu%></li>
+				  </ul>
+				</div>			
+			  	 <!-- </div> -->
 			</div>
-		<% }) %>	
+		<% }) %>
+		<% } else{ %>	
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
+		        <img src="../xys/images/none.jpg" class="img-responsive" alt="" style="clear: both;margin: auto;">  
+		    </div>
+		<% } %>
 	</div>
 
 	<div class="row" style="height: 20px;">

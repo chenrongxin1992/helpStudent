@@ -15,22 +15,23 @@ let MyServer = "http://116.13.96.53:81",
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+	res.redirect('/xys/majorlist')
+  //res.render('index', { title: 'Express' });
 });
 
 //添加专业
-router.get('/major',function(req,res){
-	let majorInfo = new major({
-			majorName : 'dddd',
-			code : '0005'
-		})
-	majorInfo.save(function(err,doc){
-		if(err){
-			res.json(formatInfo.checkError(-1,err.message))
-		}
-		res.json(formatInfo.resResult(0,doc))
-	})
-})
+// router.get('/major',function(req,res){
+// 	let majorInfo = new major({
+// 			majorName : '自动机与形式语言',
+// 			code : '0031'
+// 		})
+// 	majorInfo.save(function(err,doc){
+// 		if(err){
+// 			res.json(formatInfo.checkError(-1,err.message))
+// 		}
+// 		res.json(formatInfo.resResult(0,doc))
+// 	})
+// })
 
 //添加对应专业学生
 router.get('/import',function(req,res){
@@ -61,6 +62,7 @@ router.get('/import',function(req,res){
             let workbook = xlsx.read(data);
             let sheetNames = workbook.SheetNames; // 返回 ['sheet1', 'sheet2',……]
             let worksheet = workbook.Sheets[sheetNames[0]];// 获取excel的第一个表格
+            console.log(worksheet)
             let ref = worksheet['!ref']; //获取excel的有效范围,比如A1:F20
             let reg = /[a-zA-Z]/g;
             ref = ref.replace(reg,"");
@@ -68,9 +70,9 @@ router.get('/import',function(req,res){
             console.log("line====>",line);
             // header ['序号','姓名','学号','年级','手机号','辅导课程','辅导地点','辅导时间'] 
 
-            //循环读出每一行，然后处理 那为什么想打我呀？
+            //循环读出每一行，然后处理 
             for(let i = 2; i <= line; i++){
-                if(!worksheet['A'+i] && !worksheet['B'+i] && !worksheet['C'+i] && !worksheet['D'+i] && !worksheet['E'+i] && i != 2){   //如果大于2的某行为空,则下面的行不算了
+                if(!worksheet['A'+i] && !worksheet['B'+i] && !worksheet['C'+i] && !worksheet['D'+i] && !worksheet['E'+i] && !worksheet['F'+i] && !worksheet['G'+i] && !worksheet['H'+i]  && !worksheet['I'+i]&& i != 2){   //如果大于2的某行为空,则下面的行不算了
                     break;
                 }
                 let tempItem = {
@@ -81,8 +83,10 @@ router.get('/import',function(req,res){
                 	stuPhoneNum : worksheet['E'+i].v || '',
                 	majorName : worksheet['F'+i].v || '',
                 	teachPlace : worksheet['G'+i].v || '',
-                	teachTime : worksheet['H'+i].v || '' 
+                	teachTime : worksheet['H'+i].v || '' ,
+                	dang : worksheet['I'+i].v || ''
                 }
+
                 excelArray.push(tempItem)
             }
             formatInfo.checkResult(excelArray)
@@ -109,7 +113,7 @@ router.get('/majorlist',function(req,res){
 			formatInfo.checkError(error.message)
 			return res.json(formatInfo.resResult(-1,error.message))
 		}
-		return res.render('majorlist',{title:'专业列表',majorlist:result})
+		return res.render('majorlist',{title:'课程列表',majorlist:result})
 	})
 })
 
@@ -173,6 +177,112 @@ function pipei(str,arg){
 	}
 }
 
+//选择我的学困生
+router.get('/myhelpstu',function(req,res){
+	if(!req.query.ticket){
+		let ReturnURL = 'http://qiandao.szu.edu.cn:81/xys' + req.originalUrl
+		console.log('ReturnURL url-->',ReturnURL)
+		let url = CASserver + 'login?service=' + ReturnURL
+		console.log('check redirecturl -->',url)
+
+		if(req.session.student){
+			console.log('没有ticket,学生有session')
+			console.log('session-->',req.session.student)
+			//返回页面让学困生填写联系方式，并将code对应的课程和学优生信息返回
+			//如果学生已经选择好学优生，则直接显示最后结果
+			//这一步加上判断，看学生是否已经选择了该辅导学生
+			logic.mystu(req.session.student,function(error,result){
+				if(error && error !=1 ){
+					res.json(formatInfo.resResult(-1,error.message))
+				}
+				if(error && error == 1){
+					return res.render('mystu',{title:'暂时没有学困生',result:null})
+				}
+				res.render('mystu',{title:'选择我的学困生',result:result})
+			})
+		}
+		else{
+			console.log('没有ticket，去获取ticket')
+			return res.redirect(url)
+		}
+	}
+	else{
+		if(req.session.student){
+			console.log('有ticket,也有session')
+			console.log('session-->',req.session.student)
+			logic.mystu(req.session.student,function(error,result){
+				if(error && error !=1 ){
+					res.json(formatInfo.resResult(-1,error.message))
+				}
+				if(error && error == 1){
+					return res.render('mystu',{title:'暂时没有学困生',result:null})
+				}
+				res.render('mystu',{title:'选择我的学困生',result:result})
+			})
+		}
+		else{
+			// let majorstuinfo = req.query.majorstuinfo,
+			// 	stuXueHao = majorstuinfo.substring(0,10),
+			// 	code = majorstuinfo.substring(10,14)
+			let ReturnURL = 'http://qiandao.szu.edu.cn:81/xys' + req.originalUrl
+			console.log('ReturnURL url-->',ReturnURL)
+			console.log('you ticket, meiyou session')
+			let ticket = req.query.ticket
+			console.log('check ticket-->',ticket)
+			let url = CASserver + 'serviceValidate?ticket=' + ticket + '&service=' + ReturnURL
+			console.log('check url -->',url)
+			request(url, function (error, response, body) {
+				    if (!error && response.statusCode == 200) {
+				    	console.log('body -- >',body)
+				       let user = pipei(body,'user'),//工号
+						   eduPersonOrgDN = pipei(body,'eduPersonOrgDN'),//学院
+						   alias = pipei(body,'alias'),//校园卡号
+						   cn = pipei(body,'cn'),//姓名
+						   gender = pipei(body,'gender'),//性别
+						   containerId = pipei(body,'containerId'),//个人信息（包括uid，）
+						   nianji = null
+						if(containerId){
+							RankName = containerId.substring(18,21)//卡类别 jzg-->教职工
+						}else{
+							RankName = null
+						}
+						if(user){
+						   	nianji = user.substring(0,4)
+						}else{
+						   	nianji = null
+						}
+						console.log('check final result -->',user,eduPersonOrgDN,alias,cn,gender,containerId,RankName)
+						let arg = {}
+							arg.nianji = nianji
+						   	arg.user = user
+						   	arg.eduPersonOrgDN = eduPersonOrgDN
+						   	arg.alias = alias
+						   	arg.cn = cn
+						   	arg.gender = gender
+						   	arg.containerId = containerId
+						   	arg.RankName = RankName
+						   	// arg.code = code
+						   	// arg.stuXueHao = stuXueHao
+						    console.log('check arg-->',arg)
+
+						   console.log('check arg-->',arg)
+						   if(arg.user == null){
+						   		console.log('ticket is unvalid,重新回去获取ticket，清空session')
+						   		delete req.session.student
+						   		console.log('check req.session.student-->',req.session.student)
+						   		return res.json({'errCode':-1,'errMsg':body})
+						   }else{
+						   		req.session.student = arg
+						   		return res.redirect(ReturnURL)
+						  }
+				     }else{
+				     	console.log(error)
+				     }
+			    })
+		}
+	}
+})
+
 //学生选择学优生，跳转，然后填写信息
 router.get('/choosestu',function(req,res){
 	// let majorstuinfo = req.query.majorstuinfo,
@@ -180,7 +290,7 @@ router.get('/choosestu',function(req,res){
 	// 	code = majorstuinfo.substring(9,13)
 	// console.log()
 	if(!req.query.ticket){
-		let ReturnURL = 'http://qiandao.szu.edu.cn:81' + req.originalUrl
+		let ReturnURL = 'http://qiandao.szu.edu.cn:81/xys' + req.originalUrl
 		console.log('ReturnURL url-->',ReturnURL)
 		let url = CASserver + 'login?service=' + ReturnURL
 		console.log('check redirecturl -->',url)
@@ -192,9 +302,19 @@ router.get('/choosestu',function(req,res){
 			//返回页面让学困生填写联系方式，并将code对应的课程和学优生信息返回
 			//如果学生已经选择好学优生，则直接显示最后结果
 			//这一步加上判断，看学生是否已经选择了该辅导学生
-			logic.choosestu(req.session.student,function(error,result){
-				if(error){
+			let majorstuinfo = req.query.majorstuinfo,
+				stuXueHao = majorstuinfo.substring(0,10),
+				code = majorstuinfo.substring(10,14)
+			let arg = req.session.student
+				arg.code = code
+				arg.stuXueHao = stuXueHao
+			console.log('有session，加入code和stuxuehao-->',arg)
+			logic.choosestu(arg,function(error,result){
+				if(error && error != 1){
 					res.json(formatInfo.resResult(-1,error.message))
+				}
+				if(error && error == 1){
+					return res.render('haschoosestu',{title:'已选过该课程'})
 				}
 				res.render('choosestu',{title:'选择学优生',result:result})
 			})
@@ -208,9 +328,19 @@ router.get('/choosestu',function(req,res){
 		if(req.session.student){
 			console.log('有ticket,也有session')
 			console.log('session-->',req.session.student)
-			logic.choosestu(req.session.student,function(error,result){
-				if(error){
+			let majorstuinfo = req.query.majorstuinfo,
+				stuXueHao = majorstuinfo.substring(0,10),
+				code = majorstuinfo.substring(10,14)
+			let arg = req.session.student
+				arg.code = code
+				arg.stuXueHao = stuXueHao
+			console.log('有session，加入code和stuxuehao-->',arg)
+			logic.choosestu(arg,function(error,result){
+				if(error && error !=1 ){
 					res.json(formatInfo.resResult(-1,error.message))
+				}
+				if(error && error == 1){
+					return res.render('haschoosestu',{title:'已选过该课程'})
 				}
 				res.render('choosestu',{title:'选择学优生',result:result})
 			})
@@ -219,7 +349,7 @@ router.get('/choosestu',function(req,res){
 			let majorstuinfo = req.query.majorstuinfo,
 				stuXueHao = majorstuinfo.substring(0,10),
 				code = majorstuinfo.substring(10,14)
-			let ReturnURL = 'http://qiandao.szu.edu.cn:81' + req.originalUrl
+			let ReturnURL = 'http://qiandao.szu.edu.cn:81/xys' + req.originalUrl
 			console.log('ReturnURL url-->',ReturnURL)
 			console.log('you ticket, meiyou session')
 			let ticket = req.query.ticket
@@ -290,4 +420,122 @@ router.post('/choosestuconfirm',function(req,res){
 		return res.json(formatInfo.resResult(0,'confirm success'))
 	})
 })
+
+//选择成功时跳转
+router.get('/choosestusucess',function(req,res){
+	console.log('in router choosestusucess')
+	logic.choosestusucess(req.session.student,function(error,result){
+		if(error){
+			res.json(formatInfo.resResult(-1,error.message))
+		}
+		res.render('choosestusucess',{title:'选择成功',result:result})
+	})
+})
+
+//查询选择的学优生
+router.get('/mychoose',function(req,res){
+	if(!req.query.ticket){
+		let ReturnURL = 'http://qiandao.szu.edu.cn:81/xys' + req.originalUrl
+		console.log('ReturnURL url-->',ReturnURL)
+		let url = CASserver + 'login?service=' + ReturnURL
+		console.log('check redirecturl -->',url)
+
+		if(req.session.student){
+			console.log('没有ticket,学生有session')
+			console.log('session-->',req.session.student)
+			//返回页面让学困生填写联系方式，并将code对应的课程和学优生信息返回
+			//如果学生已经选择好学优生，则直接显示最后结果
+			//这一步加上判断，看学生是否已经选择了该辅导学生
+			logic.mychoose(req.session.student,function(error,result){
+				if(error && error !=1 ){
+					res.json(formatInfo.resResult(-1,error.message))
+				}
+				if(error && error == 1){
+					return res.render('mychoose',{title:'没有选择学优生',result:null})
+				}
+				res.render('mychoose',{title:'选择的学优生',result:result})
+			})
+		}
+		else{
+			console.log('没有ticket，去获取ticket')
+			return res.redirect(url)
+		}
+	}
+	else{
+		if(req.session.student){
+			console.log('有ticket,也有session')
+			console.log('session-->',req.session.student)
+			logic.mychoose(req.session.student,function(error,result){
+				if(error && error !=1 ){
+					res.json(formatInfo.resResult(-1,error.message))
+				}
+				if(error && error == 1){
+					return res.render('mychoose',{title:'没有选择学优生',result:null})
+				}
+				res.render('mychoose',{title:'选择的学优生',result:result})
+			})
+		}
+		else{
+			// let majorstuinfo = req.query.majorstuinfo,
+			// 	stuXueHao = majorstuinfo.substring(0,10),
+			// 	code = majorstuinfo.substring(10,14)
+			let ReturnURL = 'http://qiandao.szu.edu.cn:81/xys' + req.originalUrl
+			console.log('ReturnURL url-->',ReturnURL)
+			console.log('you ticket, meiyou session')
+			let ticket = req.query.ticket
+			console.log('check ticket-->',ticket)
+			let url = CASserver + 'serviceValidate?ticket=' + ticket + '&service=' + ReturnURL
+			console.log('check url -->',url)
+			request(url, function (error, response, body) {
+				    if (!error && response.statusCode == 200) {
+				    	console.log('body -- >',body)
+				       let user = pipei(body,'user'),//工号
+						   eduPersonOrgDN = pipei(body,'eduPersonOrgDN'),//学院
+						   alias = pipei(body,'alias'),//校园卡号
+						   cn = pipei(body,'cn'),//姓名
+						   gender = pipei(body,'gender'),//性别
+						   containerId = pipei(body,'containerId'),//个人信息（包括uid，）
+						   nianji = null
+						if(containerId){
+							RankName = containerId.substring(18,21)//卡类别 jzg-->教职工
+						}else{
+							RankName = null
+						}
+						if(user){
+						   	nianji = user.substring(0,4)
+						}else{
+						   	nianji = null
+						}
+						console.log('check final result -->',user,eduPersonOrgDN,alias,cn,gender,containerId,RankName)
+						let arg = {}
+							arg.nianji = nianji
+						   	arg.user = user
+						   	arg.eduPersonOrgDN = eduPersonOrgDN
+						   	arg.alias = alias
+						   	arg.cn = cn
+						   	arg.gender = gender
+						   	arg.containerId = containerId
+						   	arg.RankName = RankName
+						   	// arg.code = code
+						   	// arg.stuXueHao = stuXueHao
+						    console.log('check arg-->',arg)
+
+						   console.log('check arg-->',arg)
+						   if(arg.user == null){
+						   		console.log('ticket is unvalid,重新回去获取ticket，清空session')
+						   		delete req.session.student
+						   		console.log('check req.session.student-->',req.session.student)
+						   		return res.json({'errCode':-1,'errMsg':body})
+						   }else{
+						   		req.session.student = arg
+						   		return res.redirect(ReturnURL)
+						  }
+				     }else{
+				     	console.log(error)
+				     }
+			    })
+		}
+	}
+})
+
 module.exports = router;

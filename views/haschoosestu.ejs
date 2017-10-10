@@ -11,6 +11,7 @@
     <!-- Bootstrap -->
     <link rel='stylesheet' href='/xys/stylesheets/bootstrap.min.css' />
 	<link rel='stylesheet' href='/xys/stylesheets/style.css' />
+	<link rel='stylesheet' href='/xys/stylesheets/bootstrapValidator.min.css' />
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -19,16 +20,6 @@
       <script src="http://apps.bdimg.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <style type="text/css">
-		.majorlist:hover{
-			background-color:#00B7FF;
-		}
-		.majorlist{
-			margin: 5px 0;
-			height:100px;
-			background-color:#5cb85c;
-			text-align:center;
-			line-height:100px;
-		}
     </style>
   </head>
 <body>
@@ -39,45 +30,41 @@
           <img src="../xys/images/szucsselogo.png" class="img-responsive" alt="">  
         </div>
         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-		  <div style="min-height: 70px;"></div>
+		 <!--  <div style="min-height: 70px;"></div> -->
         </div>
 	</div>
 
 	<div class="row" style=" padding:0 15px;">
-		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="background-color: #00B7FF;text-align: center;font-size: 28px; line-height: 30px;">
-			学困生帮扶
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="color:red;text-align: center;font-size: 20px; line-height: 24px;margin-top: 15px;">
+			你已选过该课程的学优生，不能重新选择！
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-			<span class="pull-right"><a href="/xys/myhelpstu?what=what">我辅导的学生</a> | <a href="/xys/mychoose?what=what">我选择的学优生</a></span>
-		</div>
-	</div>
-
-	<div class="row">
-		<% majorlist.forEach(function(item){ %>
-			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 ">
-			 <a href="/xys/majorstu?code=<%=item.code%>">
-			  <div class="majorlist">
-			  	<span class="glyphicon glyphicon-book" style="color:black;font-size:22px;"> <%=item.majorName%></span>
-			  </div>
-			 </a>
-			</div>
-		<% }) %>	
-	</div>
-
-	<div class="row" style="height: 20px;">
-        <hr style="height:1px;border:none;border-top:1px dashed #5cb85c;" />
+  <div class="row" style="padding:0 15px; text-align: center;">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding:15px 0;">
+      <a href="/xys/mychoose?what=what" class="btn btn-success">查看我的选择情况</a>
     </div>
+  </div>
 
-    <div class="row">
+  <div class="row" style="padding:0 15px; text-align: center;">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding:15px 0;">
+      <a href="/xys/majorlist" class="btn btn-success">返回专业列表</a>
+    </div>
+  </div>
+
+  <div class="row" style="height: 20px;">
+      <hr style="height:1px;border:none;border-top:1px dashed #5cb85c;" />
+  </div>
+
+  <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 " style="text-align: center;">
-            <span>2017 © 计算机与软件学院</span>
+          <span>2017 © 计算机与软件学院</span>
         </div>
-    </div>
+  </div>
 
-<!-- 	<div class="row text-center">
+	
+
+	<!-- <div class="row text-center">
 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 			<div id="page"></div>
 		</div>
@@ -87,7 +74,24 @@
     <script src="/xys/javascripts/jquery-1.11.2.min.js"></script>
     <script src="/xys/javascripts/bootstrap.min.js"></script>
     <script src="/xys/javascripts/bootstrap-paginator.min.js"></script>
-    <script type="text/javascript">   
+    <script type="text/javascript" src='/xys/javascripts/bootstrapValidator.min.js' ></script>
+    <script type="text/javascript">
+    function GetQueryString(name)
+	{
+		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+		var r = window.location.search.substr(1).match(reg);
+		if(r!=null)return  unescape(r[2]); return null;
+	}
+	function br2nl(txt){
+        var re=/(<br\s\/>|<br>|<BR>|<BR\/>)/g;
+        var s=txt.replace(re,"\n");
+        return s;                                  
+    }
+    $(function(){
+	    'use strict';
+        
+	      
+    })
 	</script>
   </body>
 </html>

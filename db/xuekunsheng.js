@@ -18,12 +18,13 @@ var xuekunshengSchema = new Schema({
     teachTime :{type:String},//辅导时间
     createTime : {type : String, default : moment().format('YYYY-MM-DD HH:mm:ss') },  
     createTimeStamp : {type : String,default:moment().format('X')},
+    dang:{type:String,default:null},
     xuekunshengxuehao :{type:String},
     xuekunshengxiaoyuankahao : {type:String},
     xuekunshengGender : {type:String},
-    xuekunshengContace : {type:String},
+    xuekunshengContact : {type:String},
     xuekunshengName : {type:String},
-    xuekunshengbeizhu:{type:String}
+    xuekunshengbeizhu:{type:String,default:'暂无'}
 })
 
 module.exports = mongoose.model('xuekunsheng',xuekunshengSchema);

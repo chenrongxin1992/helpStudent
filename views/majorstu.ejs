@@ -9,8 +9,8 @@
     <title><%= title %></title>
 
     <!-- Bootstrap -->
-    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
-	<link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/xys/stylesheets/bootstrap.min.css' />
+	<link rel='stylesheet' href='/xys/stylesheets/style.css' />
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -27,26 +27,36 @@
 <div class="container-fluid" style="padding: 0 0 ">
 	<div class="row-fluid">
 		<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-          <img src="../images/szucsselogo.png" class="img-responsive" alt="">  
+          <img src="../xys/images/szucsselogo.png" class="img-responsive" alt="">  
         </div>
         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-		  <div style="min-height: 70px;"></div>
+		  <!-- <div style="min-height: 70px;"></div> -->
         </div>
 	</div>
 
 	<div class="row-fluid" style=" padding:0 15px;">
-		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="background-color: #5cb85c;text-align: center;font-size: 20px; line-height: 24px;">
-			辅导 <%=majorName%> 课程的学生名单
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="background-color: #00B7FF;text-align: center;font-size: 22px; line-height: 26px;">
+			<span style="font-weight: bold;">辅导 <%=majorName%> 课程的学生名单</span>
 		</div>
 	</div>
 
+	<div class="row-fluid">
+	    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+	      <span class="pull-right"><a href="/xys/majorlist">返回专业列表</a></span>
+	    </div>
+  	</div>
+
 	<div class="row-fluid" id="majorstu">
+		<%if (majorstu.length != 0) { %>
 		<% majorstu.forEach(function(item){ %>
 			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
 			 	<!--  <div style="margin: 5px 0;min-height:100px;background-color:red;text-align:center;"> -->
 			 	<div class="card card-inverse text-center" style="background-color: #5cb85c; border-color: #5cb85c;" >
 				  <div class="card-block">
-				    <h4 class="card-title" style="padding-top:7px"><%=item.stuName%></h4>
+				    <h4 class="card-title" style="padding-top:7px"><%=item.stuName%>
+				    	<%if(item.dang == '党员'){%>(党员)
+				    	<%}%>
+				    </h4>
 				  </div>
 				  <ul class="list-group list-group-flush">
 				    <li class="list-group-item">学号：<%=item.stuXueHao%></li>
@@ -55,10 +65,10 @@
 				    <li class="list-group-item">辅导时间：<%=item.teachTime%></li>
 				    <li class="list-group-item">已选人数：<%=item.chooseNum%></li>
 				    <li class="list-group-item">
-				    <% if(item.chooseNum == '3'){%>
-				    	<a href="#" class="btn btn-primary" disabled="disabled" style="font-size:7px;">选择</a>
+				    <% if(item.chooseNum >= 3){%>
+				    	<a  class="btn btn-primary" disabled="disabled" style="font-size:7px;">选择</a>
 				   	<%}else{%>
-				   		<a href="/choosestu?majorstuinfo=<%=item.stuXueHao%><%=item.code%>" class="btn btn-primary" class="card-link" style="font-size:7px;">选择</a>
+				   		<a href="/xys/choosestu?majorstuinfo=<%=item.stuXueHao%><%=item.code%>" class="btn btn-primary" class="card-link" style="font-size:7px;">选择</a>
 				   	<%}%>
 				    </li>
 				  </ul>
@@ -66,6 +76,11 @@
 			  	 <!-- </div> -->
 			</div>
 		<% }) %>	
+		<% } else { %>
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
+		        <img src="../xys/images/none.jpg" class="img-responsive" alt="" style="clear: both;margin: auto;">  
+		    </div>
+		<% } %>
 	</div>
 
 	<div class="row-fluid text-center">
@@ -73,11 +88,24 @@
 			<div id="page"></div>
 		</div>
 	</div>
+
+	<div class="row-fluid">
+	  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 " >
+        <hr style="height:1px;border:none;border-top:1px dashed #5cb85c;" />
+      </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 " style="text-align: center;">
+           <span>2017 © 计算机与软件学院</span>
+        </div>
+    </div>
+
 </div>
 
-    <script src="/javascripts/jquery-1.11.2.min.js"></script>
-    <script src="/javascripts/bootstrap.min.js"></script>
-    <script src="/javascripts/bootstrap-paginator.min.js"></script>
+    <script src="/xys/javascripts/jquery-1.11.2.min.js"></script>
+    <script src="/xys/javascripts/bootstrap.min.js"></script>
+    <script src="/xys/javascripts/bootstrap-paginator.min.js"></script>
     <script type="text/javascript">
     function GetQueryString(name)
 	{
@@ -108,7 +136,7 @@
                 onPageClicked:function(e,originalEvent,type,page){
                 	console.log('选择第几页 -->',page)
                     $.ajax({
-                    	url:"/majorstu",
+                    	url:"/xys/majorstu",
                         type:"POST",
                         async:true,
                         data:{
@@ -127,12 +155,12 @@
 			            				return '<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">'+
 							            		'<div class="card card-inverse text-center" style="background-color: #5cb85c; border-color: #5cb85c;">' + '<div class="card-block">' + 
 							            		'<h4 class="card-title" style="padding-top:7px">' + item.stuName + '</h4></div>' +'<ul class="list-group list-group-flush">' + '<li class="list-group-item">学号：' + item.stuXueHao +
-							            		'</li><li class="list-group-item">电话：' + item.stuPhoneNum + '</li><li class="list-group-item">辅导地点：' + item.teachPlace + '</li><li class="list-group-item">辅导时间：' + item.teachTime + '</li><li class="list-group-item">已选人数：' + item.chooseNum + '</li><li class="list-group-item">' + '<a class="btn btn-primary" disabled="disabled" style="font-size:7px;" href="#">选择</a></li></div></div>'
+							            		'</li><li class="list-group-item">电话：' + item.stuPhoneNum + '</li><li class="list-group-item">辅导地点：' + item.teachPlace + '</li><li class="list-group-item">辅导时间：' + item.teachTime + '</li><li class="list-group-item">已选人数：' + item.chooseNum + '</li><li class="list-group-item">' + '<a class="btn btn-primary" disabled="disabled" style="font-size:7px;" >选择</a></li></div></div>'
 			            			}else{
 			            				return '<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">'+
 							            		'<div class="card card-inverse text-center" style="background-color: #5cb85c; border-color: #5cb85c;">' + '<div class="card-block">' + 
 							            		'<h4 class="card-title" style="padding-top:7px">' + item.stuName + '</h4></div>' +'<ul class="list-group list-group-flush">' + '<li class="list-group-item">学号：' + item.stuXueHao +
-							            		'</li><li class="list-group-item">电话：' + item.stuPhoneNum + '</li><li class="list-group-item">辅导地点：' + item.teachPlace + '</li><li class="list-group-item">辅导时间：' + item.teachTime + '</li><li class="list-group-item">已选人数：' + item.chooseNum + '</li><li class="list-group-item">' + '<a class="btn btn-primary" style="font-size:7px;" href=/choosestu?majorstuinfo='+item.stuXueHao+item.code+' >选择</a></li></div></div>'
+							            		'</li><li class="list-group-item">电话：' + item.stuPhoneNum + '</li><li class="list-group-item">辅导地点：' + item.teachPlace + '</li><li class="list-group-item">辅导时间：' + item.teachTime + '</li><li class="list-group-item">已选人数：' + item.chooseNum + '</li><li class="list-group-item">' + '<a class="btn btn-primary" style="font-size:7px;" href=/xys/choosestu?majorstuinfo='+item.stuXueHao+item.code+' >选择</a></li></div></div>'
 			            			}
 			            		})
 								i++

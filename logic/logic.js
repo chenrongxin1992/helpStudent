@@ -33,7 +33,8 @@ exports.importExcel = function(arrayInfo,callback){
 			stuNianJi:item.stuNianJi,
 			stuPhoneNum:item.stuPhoneNum,
 			teachPlace:item.teachPlace,
-			teachTime:item.teachTime
+			teachTime:item.teachTime,
+			dang:(item.dang == '是') ? '党员' : ''
 		})
 		majorstu.save(function(err,doc){
 			if(err){
@@ -160,16 +161,70 @@ exports.getMajorStuPost = function(code,limit,offset,callback){
 exports.choosestu = function(arg,callback){
 	console.log('进入logic')
 	console.log(arg)
-	let search = majorStu.findOne({})
+	async.waterfall([
+		function(cb){
+			let search = xuekunsheng.findOne({})
+				search.where('code').equals(arg.code)
+				search.where('xuekunshengxiaoyuankahao').equals(arg.alias)
+				search.exec(function(err,doc){
+					if(err){
+						console.log('search err')
+						cb(err)
+					}
+					if(!doc){
+						console.log('没有选过学优生')
+						cb(null)
+					}
+					if(doc){
+						console.log('该课程已经选过学优生，不能再选')
+						console.log(doc)
+						cb(1,'已选过该课程')
+					}	
+				})
+		},
+		function(cb){
+			let search = majorStu.findOne({})
+				search.where('code').equals(arg.code)
+				search.where('stuXueHao').equals(arg.stuXueHao)
+				search.exec(function(err,doc){
+					if(err){
+						formatInfo.checkError(err.message)
+						cb(err)
+					}
+					console.log('搜索结果-->',doc)
+					formatInfo.checkResult(doc)
+					cb(null,doc)
+				})
+		}
+	],function(error,result){
+		if(error && error != 1){
+			console.log('async err')
+			callback(error)
+		}
+		if(error && error == 1){
+			console.log('async')
+			callback(1,'已选过该课程')
+		}
+		if(!error){
+			callback(null,result)
+		}
+
+	})
+}
+
+//
+exports.choosestusucess = function(arg,callback){
+	console.log('check arg-->',arg)
+	let search = xuekunsheng.findOne({})
 		search.where('code').equals(arg.code)
 		search.where('stuXueHao').equals(arg.stuXueHao)
+		search.where('xuekunshengxiaoyuankahao').equals(arg.alias)
 		search.exec(function(err,doc){
 			if(err){
-				formatInfo.checkError(err.message)
+				console.log('search err')
 				callback(err)
 			}
-			console.log('搜索结果-->',doc)
-			formatInfo.checkResult(doc)
+			console.log('doc -->',doc)
 			callback(null,doc)
 		})
 }
@@ -213,11 +268,12 @@ exports.choosestuconfirm = function(arg,callback){
 				stuPhoneNum:doc.stuPhoneNum,
 				teachPlace:doc.teachPlace,
 				teachTime:doc.teachTime,
+				dang:doc.dang,
 				xuekunshengxuehao:arg.xuehao,
 				xuekunshengxiaoyuankahao:arg.xiaoyuankahao,
 				xuekunshengGender:arg.gender,
-				xuekunshengContace:arg.contact,
-				xuekunshengbeizhu : arg.beizhu,
+				xuekunshengContact:arg.contact,
+				xuekunshengbeizhu : (arg.beizhu) ? arg.beizhu : '暂无',
 				xuekunshengName : arg.name
 			})
 			newxuekunsheng.save(function(err,docs){
@@ -237,4 +293,44 @@ exports.choosestuconfirm = function(arg,callback){
 		console.log('async success')
 		callback(null,result)
 	})
+}
+
+exports.mychoose = function(arg,callback){
+	let search = xuekunsheng.find({})
+		search.where('xuekunshengxiaoyuankahao').equals(arg.alias)
+		search.exec(function(err,docs){
+			if(err){
+				console.log('search err',err)
+				callback(err)
+			}
+			if(!docs || docs.length == 0){
+				console.log('没有选择学生')
+				callback(1,null)
+			}
+			if(docs && docs.length != 0){
+				console.log('结果-->',docs)
+				callback(null,docs)
+			}
+		})
+}
+
+//选择我的学困生
+exports.mystu = function(arg,callback){
+	let search = xuekunsheng.find({})
+		search.where('stuXueHao').equals(arg.user)
+		search.sort('-code')
+		search.exec(function(err,docs){
+			if(err){
+				console.log('search err')
+				callback(err)
+			}
+			if(!docs || docs.length == 0){
+				console.log('没有学困生选择')
+				callback(1,null)
+			}
+			if(docs && docs.length != 0){
+				console.log('结果-->',docs)
+				callback(null,docs)
+			}
+		})
 }
