@@ -10,6 +10,8 @@ const majorStu = require('../db/majorstu')
 const fs = require('fs')
 const ejsExcel = require('ejsExcel')
 const async = require('async')
+const nodeExcel = require('excel-export')
+const urlencode = require('urlencode')
 
 let MyServer = "http://116.13.96.53:81",
 	//CASserver = "https://auth.szu.edu.cn/cas.aspx/",
@@ -37,9 +39,61 @@ router.get('/', function(req, res, next) {
 // 	})
 // })
 
-router.get('/importnew',function(req,res){
+//导出已经选好的学生
+router.get('/download',function(req,res){
+console.log('----- in router download -----')
+	logic.downloadxuekunsheng(function(error,result){
+		if(error){
+			console.log('download router error')
+			console.log(error)
+			return res.json({'errCode':-1,'errMsg':error.message})
+		}
+		if(!error && result){
+			//处理excel
+			var conf = {};
+            conf.stylesXmlFile = "styles.xml";
+            //设置表头
+            conf.cols = [{
+                    caption: '序号',
+                    type: 'number',
+                    width: 10.6
+                }, 
+	            {
+	                caption: '学困生姓名',
+	                type: 'string',
+	                width: 28
+	            }, 
+	            {
+                    caption: '学号',
+                    type: 'string',
+                    width: 10
+                }, 
+                {
+                    caption: '所选课程',
+                    type: 'string',
+                    width:35
+                },
+                {
+                    caption: '学优生姓名',
+                    type: 'string',
+                    width: 28
+                }
+			];
+			conf.rows = result.vac;//conf.rows只接受数组
+            let excelResult = nodeExcel.execute(conf),
+            	excelName = '学困生选课情况'
+            	console.log(excelName)
+            	console.log(urlencode(excelName))
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+            res.setHeader("Content-Disposition", "attachment; filename=" + urlencode(excelName) + ".xlsx")
+            res.end(excelResult, 'binary');
+		}
+	})
+})
+
+router.get('/importnew_',function(req,res){
 	console.log(__dirname)
-    let exBuf=fs.readFileSync(__dirname+'/高数1.xlsx');
+    let exBuf=fs.readFileSync(__dirname+'/大物1.xlsx');
 		ejsExcel.getExcelArr(exBuf).then(exlJson=>{
 		    console.log("---------------- read success:getExcelArr ----------------");
 		    let workBook=exlJson;

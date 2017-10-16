@@ -21,6 +21,43 @@ exports.getMajorList = function(callback){
 		})
 }
 
+//导出学困生选择情况
+exports.downloadxuekunsheng = function(callback){
+	let search = xuekunsheng.find({})
+		search.sort('-createTimeStamp')
+		search.exec(function(err,docs){
+			if(err){
+				console.log('----- search err -----')
+				callback(err)
+			}
+			if(!docs){
+				console.log('----- docs is null -----')
+				callback(null,null)
+			}
+			if(docs){
+				console.log('----- check result -----')
+				//以下为将数据封装成array数组。因为下面的方法里头只接受数组。
+	            let vac = new Array();
+	            for (let i = 0; i < docs.length; i++) {
+	                let temp = new Array();
+	                temp[0] = i + 1
+	                temp[1] = docs[i].xuekunshengName
+	                temp[2] = docs[i].xuekunshengxuehao
+	                temp[3] = docs[i].majorName
+	                temp[4] = docs[i].stuName
+	                vac.push(temp);
+	            };
+				console.log('check vac -- >',vac)
+				let result = {}
+					result.vac = vac
+					//result.meeting_name = docs[0].meeting_name + '-' + docs[0].meeting_date
+				//vac.meeting_name = docs[0].meeting_name
+				//info.vac = vac
+				callback(null,result)
+			}
+		})
+}
+
 //导入excel
 exports.importExcel = function(arrayInfo,callback){
 	async.eachLimit(arrayInfo,10,function(item,cb){
