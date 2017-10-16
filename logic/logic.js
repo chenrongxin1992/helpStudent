@@ -24,17 +24,38 @@ exports.getMajorList = function(callback){
 //导入excel
 exports.importExcel = function(arrayInfo,callback){
 	async.eachLimit(arrayInfo,10,function(item,cb){
+		let tempTime = ''
+		if(item.zhouyi != '没空'){
+			tempTime = '周一 ' + item.zhouyi + ','
+		}
+		if(item.zhouer != '没空'){
+			tempTime = tempTime + '周二 ' + item.zhouer + ','
+		}
+		if(item.zhousan != '没空'){
+			tempTime = tempTime + '周三 ' + item.zhousan + ','
+		}
+		if(item.zhousi != '没空'){
+			tempTime = tempTime + '周四 ' + item.zhousi + ','
+		}
+		if(item.zhouwu != '没空'){
+			tempTime = tempTime + '周五 ' + item.zhouwu + ','
+		}
+		if(item.zhouliu != '没空'){
+			tempTime = tempTime + '周六 ' + item.zhouliu + ','
+		}
+		if(item.zhouri != '没空'){
+			tempTime = tempTime + '周日 ' + item.zhouri + ','
+		}
 		formatInfo.checkResult(item)
+		console.log('辅导时间-->',tempTime)
 		let majorstu = new majorStu({
 			code:item.code,
 			stuName:item.stuName,
 			majorName:item.majorName,
 			stuXueHao:item.stuXueHao,
-			stuNianJi:item.stuNianJi,
-			stuPhoneNum:item.stuPhoneNum,
-			teachPlace:item.teachPlace,
-			teachTime:item.teachTime,
-			dang:(item.dang == '是') ? '党员' : ''
+			stuGender:item.stuGender,
+			dang:(item.dang == '是') ? '党员' : '',
+			teachTime : tempTime
 		})
 		majorstu.save(function(err,doc){
 			if(err){
@@ -90,6 +111,7 @@ exports.getMajorStu = function(code,limit,offset,callback){
 				search.where('code').equals(code)
 				search.limit(limit)
 				search.skip(numSkip)
+
 				search.exec(function(err,docs){
 					if(err){
 						formatInfo.checkError(err.message)
@@ -269,6 +291,7 @@ exports.choosestuconfirm = function(arg,callback){
 				teachPlace:doc.teachPlace,
 				teachTime:doc.teachTime,
 				dang:doc.dang,
+				stuGender:doc.stuGender,
 				xuekunshengxuehao:arg.xuehao,
 				xuekunshengxiaoyuankahao:arg.xiaoyuankahao,
 				xuekunshengGender:arg.gender,

@@ -60,9 +60,9 @@
 				  </div>
 				  <ul class="list-group list-group-flush">
 				    <li class="list-group-item">学号：<%=item.stuXueHao%></li>
-				    <li class="list-group-item">电话：<%=item.stuPhoneNum%></li>
-				    <li class="list-group-item">辅导地点：<%=item.teachPlace%></li>
-				    <li class="list-group-item">辅导时间：<%=item.teachTime%></li>
+				    <li class="list-group-item">性别：<%=item.stuGender%></li>
+				    <li class="list-group-item">电话：<%=item.stuPhoneNum%></li>				    
+				    <li class="list-group-item" style="height: 60px;line-height: 40px;">辅导时间：<%=item.teachTime%></li>
 				    <li class="list-group-item">已选人数：<%=item.chooseNum%></li>
 				    <li class="list-group-item">
 				    <% if(item.chooseNum >= 3){%>
@@ -154,13 +154,13 @@
 			            			if(item.chooseNum == '3'){
 			            				return '<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">'+
 							            		'<div class="card card-inverse text-center" style="background-color: #5cb85c; border-color: #5cb85c;">' + '<div class="card-block">' + 
-							            		'<h4 class="card-title" style="padding-top:7px">' + item.stuName + '</h4></div>' +'<ul class="list-group list-group-flush">' + '<li class="list-group-item">学号：' + item.stuXueHao +
-							            		'</li><li class="list-group-item">电话：' + item.stuPhoneNum + '</li><li class="list-group-item">辅导地点：' + item.teachPlace + '</li><li class="list-group-item">辅导时间：' + item.teachTime + '</li><li class="list-group-item">已选人数：' + item.chooseNum + '</li><li class="list-group-item">' + '<a class="btn btn-primary" disabled="disabled" style="font-size:7px;" >选择</a></li></div></div>'
+							            		'<h4 class="card-title" style="padding-top:7px">' + item.stuName + '</h4></div>' +'<ul class="list-group list-group-flush">' + '<li class="list-group-item">学号：' + item.stuXueHao +  '</li>' + '<li class="list-group-item">性别：' + item.stuGender +
+							            		'</li><li class="list-group-item">电话：' + item.stuPhoneNum + '</li><li class="list-group-item" style="height: 60px;line-height: 40px;">辅导时间：' + item.teachTime + '</li><li class="list-group-item">已选人数：' + item.chooseNum + '</li><li class="list-group-item">' + '<a class="btn btn-primary" disabled="disabled" style="font-size:7px;" >选择</a></li></div></div>'
 			            			}else{
 			            				return '<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">'+
 							            		'<div class="card card-inverse text-center" style="background-color: #5cb85c; border-color: #5cb85c;">' + '<div class="card-block">' + 
-							            		'<h4 class="card-title" style="padding-top:7px">' + item.stuName + '</h4></div>' +'<ul class="list-group list-group-flush">' + '<li class="list-group-item">学号：' + item.stuXueHao +
-							            		'</li><li class="list-group-item">电话：' + item.stuPhoneNum + '</li><li class="list-group-item">辅导地点：' + item.teachPlace + '</li><li class="list-group-item">辅导时间：' + item.teachTime + '</li><li class="list-group-item">已选人数：' + item.chooseNum + '</li><li class="list-group-item">' + '<a class="btn btn-primary" style="font-size:7px;" href=/xys/choosestu?majorstuinfo='+item.stuXueHao+item.code+' >选择</a></li></div></div>'
+							            		'<h4 class="card-title" style="padding-top:7px">' + item.stuName + '</h4></div>' +'<ul class="list-group list-group-flush">' + '<li class="list-group-item">学号：' + item.stuXueHao +  '</li>' + '<li class="list-group-item">性别：' + item.stuGender +
+							            		'</li><li class="list-group-item">电话：' + item.stuPhoneNum + '</li><li class="list-group-item" style="height: 60px;line-height: 40px;">辅导时间：' + item.teachTime + '</li><li class="list-group-item">已选人数：' + item.chooseNum + '</li><li class="list-group-item">' + '<a class="btn btn-primary" style="font-size:7px;" href=/xys/choosestu?majorstuinfo='+item.stuXueHao+item.code+' >选择</a></li></div></div>'
 			            			}
 			            		})
 								i++

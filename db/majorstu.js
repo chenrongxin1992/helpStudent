@@ -12,7 +12,7 @@ var majorStuSchema = new Schema({
     majorName :{type:String},//课程名
     stuName :{type:String},//学优生姓名
     stuXueHao :{type:String},//学号
-    stuNianJi :{type:String},//年级
+    stuGender :{type:String},//年级
     stuPhoneNum : {type:String},//联系号码
     teachPlace :{type:String},//辅导地点
     teachTime :{type:String},//辅导时间

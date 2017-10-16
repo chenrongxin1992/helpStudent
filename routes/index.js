@@ -6,6 +6,10 @@ const logic = require('../logic/logic')
 const xlsx = require('xlsx')
 const busBoy = require('busboy')
 const request = require('request')
+const majorStu = require('../db/majorstu')
+const fs = require('fs')
+const ejsExcel = require('ejsExcel')
+const async = require('async')
 
 let MyServer = "http://116.13.96.53:81",
 	//CASserver = "https://auth.szu.edu.cn/cas.aspx/",
@@ -19,11 +23,11 @@ router.get('/', function(req, res, next) {
   //res.render('index', { title: 'Express' });
 });
 
-//添加专业
+// 添加专业
 // router.get('/major',function(req,res){
 // 	let majorInfo = new major({
-// 			majorName : '自动机与形式语言',
-// 			code : '0031'
+// 			majorName : '高等数学A(1)',
+// 			code : '0001'
 // 		})
 // 	majorInfo.save(function(err,doc){
 // 		if(err){
@@ -33,78 +37,152 @@ router.get('/', function(req, res, next) {
 // 	})
 // })
 
-//添加对应专业学生
-router.get('/import',function(req,res){
-	return res.render('import',{title:'导入学优生信息'})
-}).post('/import',function(req,res){
-	let excelArray = new Array()
-	formatInfo.checkResult(req.headers)
-	let busboy = new busBoy({
-		headers: req.headers,
-        limits: {
-            files: 1,
-            fileSize: 50000000
-        }
-	})
-	busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-        file.on('limit', function() {
-            res.json(formatInfo.resResult(-1,'File is To Large'));
-            return
-        });
-        file.on('data', function(data) {
-        	formatInfo.checkResult(fieldname)
-        	formatInfo.checkResult(file)
-        	formatInfo.checkResult(filename)
-        	formatInfo.checkResult(encoding)
-        	formatInfo.checkResult(mimetype)
-        	formatInfo.checkResult(data)
-            console.log('File [' + filename + '] got ' + data.length + ' bytes');
-            let workbook = xlsx.read(data);
-            let sheetNames = workbook.SheetNames; // 返回 ['sheet1', 'sheet2',……]
-            let worksheet = workbook.Sheets[sheetNames[0]];// 获取excel的第一个表格
-            console.log(worksheet)
-            let ref = worksheet['!ref']; //获取excel的有效范围,比如A1:F20
-            let reg = /[a-zA-Z]/g;
-            ref = ref.replace(reg,"");
-            let line = parseInt(ref.split(':')[1]); // 获取excel的有效行数
-            console.log("line====>",line);
-            // header ['序号','姓名','学号','年级','手机号','辅导课程','辅导地点','辅导时间'] 
-
-            //循环读出每一行，然后处理 
-            for(let i = 2; i <= line; i++){
-                if(!worksheet['A'+i] && !worksheet['B'+i] && !worksheet['C'+i] && !worksheet['D'+i] && !worksheet['E'+i] && !worksheet['F'+i] && !worksheet['G'+i] && !worksheet['H'+i]  && !worksheet['I'+i]&& i != 2){   //如果大于2的某行为空,则下面的行不算了
-                    break;
-                }
-                let tempItem = {
-                	code : worksheet['A'+i].v || '',
-                	stuName : worksheet['B'+i].v || '',
-                	stuXueHao : worksheet['C'+i].v || '',
-                	stuNianJi : worksheet['D'+i].v || '',
-                	stuPhoneNum : worksheet['E'+i].v || '',
-                	majorName : worksheet['F'+i].v || '',
-                	teachPlace : worksheet['G'+i].v || '',
-                	teachTime : worksheet['H'+i].v || '' ,
-                	dang : worksheet['I'+i].v || ''
-                }
-
-                excelArray.push(tempItem)
-            }
-            formatInfo.checkResult(excelArray)
-            logic.importExcel(excelArray,function(error,result){
-            	if(error){
-            		formatInfo.checkError(error.message)
-            		return res.json(formatInfo.resResult(-1,error.message))
-            	}
-            	return res.json(formatInfo.resResult(0,'import success'))
-            })
-        })
-    })
-   /*busboy.on('finish', function() {
-        res.writeHead(200);
-        //res.end('upload OK!');
-    });*/
-    return req.pipe(busboy);
+router.get('/importnew',function(req,res){
+	console.log(__dirname)
+    let exBuf=fs.readFileSync(__dirname+'/高数1.xlsx');
+		ejsExcel.getExcelArr(exBuf).then(exlJson=>{
+		    console.log("---------------- read success:getExcelArr ----------------");
+		    let workBook=exlJson;
+		    let workSheets=workBook[0];
+		    // let testarr = new Array()
+		    // console.log('type of workSheets-->',typeof workSheets)
+		    // console.log('testarr -->',typeof testarr)
+		    async.eachLimit(workSheets,1,function(item,cb){
+		    	console.log('item[7]-->',item[7])
+		    	console.log('item[8]-->',item[8])
+			    let tempTime = ''
+				if(item[7] != '没空'){
+					tempTime = '周一 ' + item[7] + '， '
+				}
+				if(item[8] != '没空'){
+					tempTime = tempTime + '周二' + item[8] + '， '
+				}
+				if(item[9] != '没空'){
+					tempTime = tempTime + '周三 ' + item[9] + '， '
+				}
+				if(item[10] != '没空'){
+					tempTime = tempTime + '周四 ' + item[10] + '， '
+				}
+				if(item[11] != '没空'){
+					tempTime = tempTime + '周五 ' + item[11] + '， '
+				}
+				if(item[12] != '没空'){
+					tempTime = tempTime + '周六 ' + item[12] + '， '
+				}
+				if(item[13] != '没空'){
+					tempTime = tempTime + '周日 ' + item[13] 
+				}
+			
+		    	let majorstu_new = new majorStu({
+		    		code : item[0],
+		    		stuName : item[1],
+		    		stuXueHao : item[2],
+		    		stuGender : item[3],
+		    		stuPhoneNum : item[4],
+		    		majorName : item[5],
+		    		dang : (item[6] == '是') ? '党员' : '',
+		    		teachTime : tempTime
+		    	})
+		    	majorstu_new.save(function(err,doc){
+		    		if(err){
+		    			console.log('save err')
+		    			cb(err)
+		    		}
+		    		//console.log('save success')
+		    		//console.log('result-->',doc)
+		    		cb(null)
+		    	})
+		    },function(err){
+		    	if(err){
+		    		console.log('eachLimit err')
+		    		console.log(err.message)
+		    	}
+		    })
+		    // workSheets.forEach((item,index)=>{
+		    //         console.log((index+1)+" row:"+item.join('    '));
+		    // })
+		}).catch(error=>{
+		    console.log("************** had error!");
+		    console.log(error);
+		});
 })
+//添加对应专业学生
+// router.get('/import',function(req,res){
+// 	return res.render('import',{title:'导入学优生信息'})
+// }).post('/import',function(req,res){
+// 	let excelArray = new Array()
+// 	formatInfo.checkResult(req.headers)
+// 	let busboy = new busBoy({
+// 		headers: req.headers,
+//         limits: {
+//             files: 1,
+//             fileSize: 50000000
+//         }
+// 	})
+// 	busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+//         file.on('limit', function() {
+//             res.json(formatInfo.resResult(-1,'File is To Large'));
+//             return
+//         });
+//         file.on('data', function(data) {
+//         	formatInfo.checkResult(fieldname)
+//         	formatInfo.checkResult(file)
+//         	formatInfo.checkResult(filename)
+//         	formatInfo.checkResult(encoding)
+//         	formatInfo.checkResult(mimetype)
+//         	formatInfo.checkResult(data)
+//             console.log('File [' + filename + '] got ' + data.length + ' bytes');
+//             let workbook = xlsx.read(data);
+//             let sheetNames = workbook.SheetNames; // 返回 ['sheet1', 'sheet2',……]
+//             let worksheet = workbook.Sheets[sheetNames[0]];// 获取excel的第一个表格
+//             console.log(worksheet)
+//             let ref = worksheet['!ref']; //获取excel的有效范围,比如A1:F20
+//             let reg = /[a-zA-Z]/g;
+//             ref = ref.replace(reg,"");
+//             let line = parseInt(ref.split(':')[1]); // 获取excel的有效行数
+//             console.log("line====>",line);
+//             // header ['课程号','姓名','学号','性别','手机号','辅导课程','是否党员','辅导时间'] 
+
+//             //循环读出每一行，然后处理 
+//             for(let i = 2; i <= line; i++){
+//                 if(!worksheet['A'+i] && !worksheet['B'+i] && !worksheet['C'+i] && !worksheet['D'+i] && !worksheet['E'+i] && !worksheet['F'+i] && !worksheet['G'+i] && !worksheet['H'+i]  && !worksheet['I'+i] && !worksheet['J'+i] && !worksheet['K'+i] && !worksheet['L'+i] && !worksheet['M'+i] && !worksheet['N'+i] && i != 2){   //如果大于2的某行为空,则下面的行不算了
+//                     break;
+//                 }
+//                 let tempItem = {
+//                 	code : worksheet['A'+i].v || '',
+//                 	stuName : worksheet['B'+i].v || '',
+//                 	stuXueHao : worksheet['C'+i].v || '',
+//                 	stuGender : worksheet['D'+i].v || '',
+//                 	stuPhoneNum : worksheet['E'+i].v || '',
+//                 	majorName : worksheet['F'+i].v || '',
+//                 	dang : worksheet['G'+i].v || '',
+//                 	zhouyi : worksheet['H'+i].v || '',
+//                 	zhouer : worksheet['I'+i].v || '',
+//                 	zhousan : worksheet['J'+i].v || '',
+//                 	zhousi : worksheet['K'+i].v || '',
+//                 	zhouwu : worksheet['L'+i].v || '',
+//                 	zhouliu : worksheet['M'+i].v || '',
+//                 	zhouri : worksheet['N'+i].v || ''
+//                 }
+
+//                 excelArray.push(tempItem)
+//             }
+//             formatInfo.checkResult(excelArray)
+//             logic.importExcel(excelArray,function(error,result){
+//             	if(error){
+//             		formatInfo.checkError(error.message)
+//             		return res.json(formatInfo.resResult(-1,error.message))
+//             	}
+//             	return res.json(formatInfo.resResult(0,'import success'))
+//             })
+//         })
+//     })
+//    /*busboy.on('finish', function() {
+//         res.writeHead(200);
+//         //res.end('upload OK!');
+//     });*/
+//     return req.pipe(busboy);
+// })
 
 //专业列表
 router.get('/majorlist',function(req,res){

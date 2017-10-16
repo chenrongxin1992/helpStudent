@@ -7,7 +7,8 @@ var mongoose = require('./db'),
     Schema = mongoose.Schema,
     moment = require('moment')
 
-var xuekunshengSchema = new Schema({          
+var xuekunshengSchema = new Schema({  
+    stuGender:{type:String},        
     code :{type : String },//课程码
     majorName :{type:String},//课程名
     stuName :{type:String},//学优生姓名
