@@ -28,8 +28,8 @@ router.get('/', function(req, res, next) {
 // 添加专业
 // router.get('/major',function(req,res){
 // 	let majorInfo = new major({
-// 			majorName : '高等数学A(1)',
-// 			code : '0001'
+// 			majorName : '自动机与形式语言',
+// 			code : '0043'
 // 		})
 // 	majorInfo.save(function(err,doc){
 // 		if(err){
@@ -66,17 +66,31 @@ console.log('----- in router download -----')
 	            {
                     caption: '学号',
                     type: 'string',
-                    width: 10
+                    width: 35
                 }, 
                 {
                     caption: '所选课程',
                     type: 'string',
                     width:35
+                },{
+                	caption:'学困生电话',
+                	type:'string',
+                	width:35
                 },
                 {
                     caption: '学优生姓名',
                     type: 'string',
-                    width: 28
+                    width: 35
+                },
+                {
+                    caption: '学优生学号',
+                    type: 'string',
+                    width: 35
+                },
+                {
+                	caption:'学优生电话',
+                	type:'string',
+                	width:35
                 }
 			];
 			conf.rows = result.vac;//conf.rows只接受数组
@@ -93,7 +107,7 @@ console.log('----- in router download -----')
 
 router.get('/importnew_',function(req,res){
 	console.log(__dirname)
-    let exBuf=fs.readFileSync(__dirname+'/大物1.xlsx');
+    let exBuf=fs.readFileSync(__dirname+'/自动机与形语言_导入格式.xlsx');
 		ejsExcel.getExcelArr(exBuf).then(exlJson=>{
 		    console.log("---------------- read success:getExcelArr ----------------");
 		    let workBook=exlJson;
@@ -126,7 +140,16 @@ router.get('/importnew_',function(req,res){
 				if(item[13] != '没空'){
 					tempTime = tempTime + '周日 ' + item[13] 
 				}
-			
+				let temp_dang = ''
+				if(item[6] == '是' || item[6] == '党员'){
+					temp_dang = '1'
+				}
+				else if(item[6] == '否' || item[6] == '其他'){
+					temp_dang = '0'
+				}
+				else{
+					temp_dang = '2'
+				}
 		    	let majorstu_new = new majorStu({
 		    		code : item[0],
 		    		stuName : item[1],
@@ -134,7 +157,7 @@ router.get('/importnew_',function(req,res){
 		    		stuGender : item[3],
 		    		stuPhoneNum : item[4],
 		    		majorName : item[5],
-		    		dang : (item[6] == '是') ? '党员' : '',
+		    		dang : temp_dang,
 		    		teachTime : tempTime
 		    	})
 		    	majorstu_new.save(function(err,doc){

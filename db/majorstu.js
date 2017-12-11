@@ -20,7 +20,7 @@ var majorStuSchema = new Schema({
     chooseNum :{type:Number,default:0},//已选人数
     createTime : {type : String, default : moment().format('YYYY-MM-DD HH:mm:ss') },  
     createTimeStamp : {type : String,default:moment().format('X')},
-    dang:{type:String,default:null}
+    dang:{type:String,default:null}//0群众，1党员，2积极分子
 })
 
 module.exports = mongoose.model('majorstu',majorStuSchema);

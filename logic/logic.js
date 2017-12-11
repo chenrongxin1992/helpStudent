@@ -44,7 +44,10 @@ exports.downloadxuekunsheng = function(callback){
 	                temp[1] = docs[i].xuekunshengName
 	                temp[2] = docs[i].xuekunshengxuehao
 	                temp[3] = docs[i].majorName
-	                temp[4] = docs[i].stuName
+	                temp[4] = docs[i].xuekunshengContact,
+	                temp[5] = docs[i].stuName,
+	                temp[6] = docs[i].stuXueHao,
+	                temp[7] = docs[i].stuPhoneNum
 	                vac.push(temp);
 	            };
 				console.log('check vac -- >',vac)
