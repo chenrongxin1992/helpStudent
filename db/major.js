@@ -7,7 +7,8 @@ var mongoose = require('./db'),
     Schema = mongoose.Schema,
     moment = require('moment')
 
-var majorSchema = new Schema({          
+var majorSchema = new Schema({   
+	inused:{type:Number,default:1},       
     code :{type : String },  //课程码
     majorName :{type:String},  //课程名
     createTime : {type : String, default : moment().format('YYYY-MM-DD HH:mm:ss') },  

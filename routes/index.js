@@ -25,11 +25,11 @@ router.get('/', function(req, res, next) {
   //res.render('index', { title: 'Express' });
 });
 
-// 添加专业
+//添加专业
 // router.get('/major',function(req,res){
 // 	let majorInfo = new major({
-// 			majorName : '自动机与形式语言',
-// 			code : '0043'
+// 			majorName : '程序设计基础',
+// 			code : '0041'
 // 		})
 // 	majorInfo.save(function(err,doc){
 // 		if(err){
@@ -107,7 +107,7 @@ console.log('----- in router download -----')
 
 router.get('/importnew_',function(req,res){
 	console.log(__dirname)
-    let exBuf=fs.readFileSync(__dirname+'/自动机与形语言_导入格式.xlsx');
+    let exBuf=fs.readFileSync(__dirname+'/自动机与形式语言.xlsx');
 		ejsExcel.getExcelArr(exBuf).then(exlJson=>{
 		    console.log("---------------- read success:getExcelArr ----------------");
 		    let workBook=exlJson;
@@ -150,6 +150,7 @@ router.get('/importnew_',function(req,res){
 				else{
 					temp_dang = '2'
 				}
+				console.log('dddddd')
 		    	let majorstu_new = new majorStu({
 		    		code : item[0],
 		    		stuName : item[1],
@@ -165,6 +166,7 @@ router.get('/importnew_',function(req,res){
 		    			console.log('save err')
 		    			cb(err)
 		    		}
+		    		console.log('666666')
 		    		//console.log('save success')
 		    		//console.log('result-->',doc)
 		    		cb(null)
@@ -174,6 +176,7 @@ router.get('/importnew_',function(req,res){
 		    		console.log('eachLimit err')
 		    		console.log(err.message)
 		    	}
+		    	console.log('done')
 		    })
 		    // workSheets.forEach((item,index)=>{
 		    //         console.log((index+1)+" row:"+item.join('    '));

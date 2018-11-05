@@ -11,7 +11,7 @@ const async = require('async')
 
 //专业列表
 exports.getMajorList = function(callback){
-	let search = major.find({})
+	let search = major.find({'inused':1})
 		search.exec(function(err,docs){
 			if(err){
 				formatInfo.checkError(err.message)
